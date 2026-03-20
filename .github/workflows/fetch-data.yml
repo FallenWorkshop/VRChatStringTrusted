@@ -11,9 +11,21 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Fetch and Format JSON
+      - name: Fetch and Update
         run: |
-          curl -s "https://cdn.fallensworkshop.com/bypass/872557386244698162/patrons" | jq . > PatreonData.json
+          curl -s "https://cdn.fallensworkshop.com/872557386244698162/patrons" -o incoming.json
+          
+          if [ -f PatreonData.json ]; then
+            jq 'del(.LastUpdated)' PatreonData.json > current_no_time.json
+            jq 'del(.LastUpdated)' incoming.json > incoming_no_time.json
+            
+            if cmp -s current_no_time.json incoming_no_time.json; then
+              echo "No actual data changes detected. Skipping commit."
+              exit 0
+            fi
+          fi
+          
+          mv incoming.json PatreonData.json
 
       - name: Commit and Push
         run: |
