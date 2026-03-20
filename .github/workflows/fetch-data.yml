@@ -20,5 +20,5 @@ jobs:
           git config user.name "GitHub Action"
           git config user.email "GitHubAction@fallensworkshop.com"
           git add PatreonData.json
-          git commit --amend -m "Latest Patreon Data Update" || git commit -m "Latest Patreon Data Update"
-          git push --force
+          git commit -m "Automated update: PatreonData.json" || exit 0
+          git push
